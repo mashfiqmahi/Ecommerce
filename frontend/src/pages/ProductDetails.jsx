@@ -1,7 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-// import { useCart } from "../context/CartContext";
-
+import { useCart } from "../context/CartContext";
 const BASEURL = (import.meta.env.VITE_DJANGO_BASE_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
 
 // works whether Django returns "/media/x.jpg" or "http://127.0.0.1:8000/media/x.jpg"
@@ -16,7 +15,7 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // const { addToCart } = useCart();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     setLoading(true);
@@ -68,10 +67,7 @@ function ProductDetails() {
             <p className="text-2xl font-semibold text-green-600 mb-6">
               ${product.price}
             </p>
-            <button
-              onClick={handleAddToCart}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
+            <button onClick={()=> addToCart(product)} className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
               Add to Cart 🛒
             </button>
             <div className="mt-4">
