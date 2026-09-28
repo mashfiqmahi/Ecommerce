@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 import os
+
+
+
+from django.template.backends import django
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -128,7 +133,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
@@ -138,6 +144,8 @@ MAILERS = {
     },
 }
 
-CORS_ALLOW_ALL_ORIGINS = [
-    "http://3000",
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
 ]
+
