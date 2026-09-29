@@ -47,3 +47,22 @@ def remove_from_cart(request):
     item_id = request.data.get('item_id')
     CartItem.objects.filter(id=item_id).delete()
     return Response({'message': 'Item removed from cart'})
+
+@api_view(['POST'])
+def update_cart_quantity(request):
+    item_id = request.data.get('item_id')
+    quantity = request.data.get('quantity')
+    if not item_id or quantity is None:
+        return Response({'error': 'Item id or quantity is required'}, status=400)
+
+    try:
+        item = CartItem.objects.get(id=item_id)
+        if int(quantity) < 1 :
+            item.delete()
+            return Response({'message': 'Quantity must be at least 1'}, status=400)
+        item.quantity = quantity
+        item.save()
+        item_serializer = CartItemSerializer(item)
+        return Response(item_serializer.data)
+    except CartItem.DoesNotExist:
+        return Response({'error': 'Item not found'}, status=404)
