@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, createRef } from "react";
+import { authFetch, getAccessToken } from "../utils/auth";
 
 const CartContext = createContext();
 
@@ -7,29 +8,26 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
 
-    // Fetch Cart from BE
+    //Fetch Cart form BE
     const fetchCart = async () => {
         try {
-            const res = await fetch(`${BASEURL}/api/cart/`);
-            if (!res.ok) {
-                throw new Error("Failed to fetch cart");
-            }
+            const res = await authFetch(`${BASEURL}/api/cart/`)
             const data = await res.json();
             setCartItems(data.items || []);
             setTotal(data.total || 0);
         } catch (error) {
             console.error("Error fetching cart:", error);
         }
-    };
+    }
 
     useEffect(() => {
         fetchCart();
     }, []);
 
-    // Add Product to Cart
+    //Add Product to Cart
     const addToCart = async (productId) => {
-        try {
-            await fetch(`${BASEURL}/api/cart/add/`, {
+        try{
+            await authFetch(`${BASEURL}/api/cart/add/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,12 +38,12 @@ export const CartProvider = ({ children }) => {
         } catch (error) {
             console.error("Error adding to cart:", error);
         }
-    };
+    }
 
-    // Remove Product from Cart
+    //Remove Product from Cart
     const removeFromCart = async (itemId) => {
-        try {
-            await fetch(`${BASEURL}/api/cart/remove/`, {
+        try{
+            await authFetch(`${BASEURL}/api/cart/remove/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -56,16 +54,16 @@ export const CartProvider = ({ children }) => {
         } catch (error) {
             console.error("Error removing from cart:", error);
         }
-    };
+    }
 
-    // Update Quantity
+    //Update Quantity
     const updateQuantity = async (itemId, quantity) => {
-        if (quantity < 1) {
+        if (quantity < 1){
             await removeFromCart(itemId);
             return;
         }
-        try {
-            await fetch(`${BASEURL}/api/cart/update/`, {
+        try{
+            await authFetch(`${BASEURL}/api/cart/update/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -76,7 +74,8 @@ export const CartProvider = ({ children }) => {
         } catch (error) {
             console.error("Error updating quantity:", error);
         }
-    };
+    }
+
     const clearCart = () => {
         setCartItems([]);
         setTotal(0);
@@ -84,8 +83,7 @@ export const CartProvider = ({ children }) => {
 
     return (
         <CartContext.Provider
-            value={{ cartItems, total, addToCart, removeFromCart, updateQuantity, clearCart }}
-        >
+        value={{ cartItems,total, addToCart, removeFromCart, updateQuantity, clearCart }}>
             {children}
         </CartContext.Provider>
     );
